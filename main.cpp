@@ -10,6 +10,9 @@ struct wordc
 };
 
 int save_word(wordc** words, int words_count, char* word) {
+    if (word == NULL) {
+        return 0;
+    }
     for (int i = 0; i < words_count; i++) {
         if (strcmp(word, words[i]->word) == 0) {
             words[i]->count++;
@@ -28,6 +31,9 @@ char* read_word(FILE* file) {
     while ((isspace(letter) || ispunct(letter)) && !feof(file)) {
         letter = fgetc(file);
     }
+    if (feof(file)) {
+        return NULL;
+    }
     char* word = (char*) malloc(5 * sizeof(char));
     int word_size = 5;
     int char_count = 0;
@@ -41,6 +47,9 @@ char* read_word(FILE* file) {
         letter = fgetc(file);
     } while ((isspace(letter) == 0) && (ispunct(letter) == 0) && !feof(file));
     word[char_count] = '\0';
+    if (strlen(word) == 0) {
+        return NULL;
+    }
     return word;
 }
 
@@ -59,9 +68,8 @@ int main(int argc, char* argv[])
 {
     char* filename;
     if (argc < 2) {
-        //printf("please enter the file name");
-        //return 0;
-        filename = "kek.txt";
+        printf("please enter the file name");
+        return 0;
     }
     else {
         filename = argv[1];
@@ -86,8 +94,6 @@ int main(int argc, char* argv[])
             words = (wordc**) realloc(words, words_size * sizeof(wordc*));
         }
     }
-
-    words_count -= 1;
 
     qsort(words, words_count, sizeof(wordc*), compare_words);
     for (int i = 0; i < words_count; i++) {
